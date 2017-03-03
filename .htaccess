@@ -1,0 +1,79 @@
+<IfModule mod_rewrite.c>
+
+	RewriteEngine On
+	RewriteBase /
+
+	# Setting expire time
+	# Turn on Expires and set default to 0
+	ExpiresActive On
+	ExpiresDefault A0
+
+	# Set up caching on media files for 1 year (forever?)
+	<FilesMatch "\.(flv|ico|pdf|avi|mov|ppt|doc|mp3|wmv|wav)$">
+	ExpiresDefault A29030400
+#	Header append Cache-Control "public"
+	</FilesMatch>
+
+	# Set up caching on media files for 1 week
+	<FilesMatch "\.(gif|jpg|jpeg|png|swf)$">
+	ExpiresDefault A604800
+#	Header append Cache-Control "public"
+	</FilesMatch>
+
+	# Set up 2 Hour caching on commonly updated files
+	<FilesMatch "\.(xml|txt|html|js|css)$">
+	ExpiresDefault A7200
+#	Header append Cache-Control "proxy-revalidate"
+	</FilesMatch>
+
+	# Force no caching for dynamic files
+	<FilesMatch "\.(php|cgi|pl|htm)$">
+	ExpiresActive Off
+#	Header set Cache-Control "private, no-cache, no-store, proxy-revalidate, no-transform"
+#	Header set Pragma "no-cache"
+	</FilesMatch>
+	# End expire time
+	
+	# image resize and set as directory
+	RewriteRule ^static/img/products/([A-Za-z0-9/_-]+)/([A-Za-z0-9/_-]+).(jpg|gif|png)$ static/upload/resize.php?class=$1&type=products&imagen=$2.$3
+        RewriteRule ^static/img/auctions/([A-Za-z0-9/_-]+)/([A-Za-z0-9/_-]+).(jpg|gif|png)$ static/upload/resize.php?class=$1&type=auctions&imagen=$2.$3
+
+
+	# Must do this before a trailing slash gets put on it
+	RewriteRule ^static/frontend/([a-zA-Z_-]*)/(.*)$ vistas/themes/$1/static/$2 [L]
+	RewriteRule ^static/admin/([a-zA-Z_-]*)/(.*)$ vistas/themes_admin/$1/static/$2 [L]
+
+	# Add Trailing Slash (Force it!) - It looks cool :)
+	# RewriteCond %{REQUEST_FILENAME} !-f
+	# RewriteCond %{REQUEST_URI} !(.*)/$
+	# RewriteRule ^(.*)$ http://%{HTTP_HOST}/$1/ [R=301,L]
+
+	# Admin 'dashboard'
+	RewriteRule ^admin$ index.php/admin [L]
+	RewriteRule ^admin/$ index.php/admin/ [L]
+
+	# Admin functions within Admin module and controller
+	RewriteRule ^admin/(navigation|users|settings|login|superLogin|passExpired|logout|changeLog)$ index.php/admin/$1 [L]
+	RewriteRule ^admin/(navigation|users|settings|login|superLogin|passExpired|logout|changeLog)/(.*)$ index.php/admin/$1/$2 [L]
+	RewriteRule ^admin/nav_(.*)$ index.php/admin/nav_$1 [L]
+
+	# All others, push to the module in question
+	RewriteRule ^admin/([a-zA-Z]*)$ $1/admin [L]
+	RewriteRule ^admin/([a-zA-Z]*)/(.*)$ $1/admin/$2 [L]
+
+	# Any request were the file or directory doesn't exist...
+	# Push to CI
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php/$1/ [L]
+
+    # MINT
+    #AddType application/x-httpd-php .html .htm
+    #php_value auto_prepend_file /home/buffalo/public_html/symlink/usr/home/masbaratov2/c2c/mint/config/auto.php	
+
+    # RewriteCond %{HTTP_HOST} ^eje1\.competenciaperfecta\.com$
+    # RewriteCond %{REQUEST_URI} !^/eje1/
+    # RewriteRule (.*) /eje1/$
+
+</IfModule>
