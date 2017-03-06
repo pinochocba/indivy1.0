@@ -51,7 +51,12 @@ class UserController extends FormController
         $this->get('session')->set('mautic.user.filter', $search);
 
         //do some default filtering
-        $filter = ['string' => $search, 'force' => ''];
+        $filter = [ 'string' => $search,
+                'force' => [[   'column'    =>  'u.businessgroup',
+                'expr'      =>  'eq',
+                'value'     =>  $this->user->getBusinessGroup()->getId()
+            ]]
+        ];
 
         $tmpl  = $this->request->isXmlHttpRequest() ? $this->request->get('tmpl', 'index') : 'index';
         $users = $this->getModel('user.user')->getEntities(

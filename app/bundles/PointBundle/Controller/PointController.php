@@ -54,7 +54,12 @@ class PointController extends FormController
         $search = $this->request->get('search', $this->get('session')->get('mautic.point.filter', ''));
         $this->get('session')->set('mautic.point.filter', $search);
 
-        $filter     = ['string' => $search, 'force' => []];
+        $filter = [ 'string' => $search,
+                'force' => [[   'column'    =>  'p.businessgroup',
+                'expr'      =>  'eq',
+                'value'     =>  $this->user->getBusinessGroup()->getId()
+            ]]
+        ];
         $orderBy    = $this->get('session')->get('mautic.point.orderby', 'p.name');
         $orderByDir = $this->get('session')->get('mautic.point.orderbydir', 'ASC');
 

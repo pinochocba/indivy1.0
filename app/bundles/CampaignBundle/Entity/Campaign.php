@@ -41,6 +41,11 @@ class Campaign extends FormEntity
     private $description;
 
     /**
+     * @var BusinessGroup
+     */
+    private $businessgroup;
+
+    /**
      * @var null|\DateTime
      */
     private $publishUp;
@@ -117,6 +122,10 @@ class Campaign extends FormEntity
         $builder->addPublishDates();
 
         $builder->addCategory();
+
+        $builder->createField('businessgroup', 'integer')
+            ->columnName('businessgroup')
+            ->build();
 
         $builder->createOneToMany('events', 'Event')
             ->setIndexBy('id')
@@ -252,6 +261,31 @@ class Campaign extends FormEntity
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set businessgroup.
+     *
+     * @param integer $businessgroup
+     *
+     * @return Form
+     */
+    public function setBusinessgroup($businessgroup)
+    {
+        $this->isChanged('businessgroup', $businessgroup);
+        $this->businessgroup = $businessgroup;
+
+        return $this;
+    }
+
+    /**
+     * Get businessgroup.
+     *
+     * @return integer
+     */
+    public function getBusinessgroup()
+    {
+        return $this->businessgroup;
     }
 
     /**

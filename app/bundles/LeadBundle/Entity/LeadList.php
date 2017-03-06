@@ -40,6 +40,11 @@ class LeadList extends FormEntity
     private $description;
 
     /**
+     * @var BusinessGroup
+     */
+    private $businessgroup;
+
+    /**
      * @var string
      */
     private $alias;
@@ -78,6 +83,10 @@ class LeadList extends FormEntity
             ->setCustomRepositoryClass('Mautic\LeadBundle\Entity\LeadListRepository');
 
         $builder->addIdColumns();
+
+        $builder->createField('businessgroup', 'integer')
+            ->columnName('businessgroup')
+            ->build();
 
         $builder->addField('alias', 'string');
 
@@ -192,6 +201,31 @@ class LeadList extends FormEntity
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set businessgroup.
+     *
+     * @param integer $businessgroup
+     *
+     * @return Form
+     */
+    public function setBusinessgroup($businessgroup)
+    {
+        $this->isChanged('businessgroup', $businessgroup);
+        $this->businessgroup = $businessgroup;
+
+        return $this;
+    }
+
+    /**
+     * Get businessgroup.
+     *
+     * @return integer
+     */
+    public function getBusinessgroup()
+    {
+        return $this->businessgroup;
     }
 
     /**

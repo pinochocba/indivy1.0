@@ -39,6 +39,11 @@ class Trigger extends FormEntity
     private $description;
 
     /**
+     * @var BusinessGroup
+     */
+    private $businessgroup;
+
+    /**
      * @var \DateTime
      */
     private $publishUp;
@@ -99,6 +104,10 @@ class Trigger extends FormEntity
             ->setCustomRepositoryClass('Mautic\PointBundle\Entity\TriggerRepository');
 
         $builder->addIdColumns();
+
+        $builder->createField('businessgroup', 'integer')
+            ->columnName('businessgroup')
+            ->build();
 
         $builder->addPublishDates();
 
@@ -186,6 +195,32 @@ class Trigger extends FormEntity
     {
         return $this->id;
     }
+
+    /**
+     * Set businessgroup.
+     *
+     * @param integer $businessgroup
+     *
+     * @return Form
+     */
+    public function setBusinessgroup($businessgroup)
+    {
+        $this->isChanged('businessgroup', $businessgroup);
+        $this->businessgroup = $businessgroup;
+
+        return $this;
+    }
+
+    /**
+     * Get businessgroup.
+     *
+     * @return integer
+     */
+    public function getBusinessgroup()
+    {
+        return $this->businessgroup;
+    }
+
 
     /**
      * Set description.

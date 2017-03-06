@@ -65,8 +65,11 @@ class ListController extends FormController
         $orderBy    = $session->get('mautic.segment.orderby', 'l.name');
         $orderByDir = $session->get('mautic.segment.orderbydir', 'ASC');
 
-        $filter = [
-            'string' => $search,
+        $filter = [ 'string' => $search,
+                    'force' => [[   'column'    =>  'l.businessgroup',
+                                    'expr'      =>  'eq',
+                                    'value'     =>  $this->user->getBusinessGroup()->getId()
+                ]]
         ];
 
         $tmpl = $this->request->isXmlHttpRequest() ? $this->request->get('tmpl', 'index') : 'index';

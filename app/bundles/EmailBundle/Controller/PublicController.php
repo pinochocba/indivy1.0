@@ -447,6 +447,7 @@ class PublicController extends CommonFormController
 
         // if additional data were sent with the tracking pixel
         $query_string = $this->request->server->get('QUERY_STRING');
+
         if (!$query_string) {
             $logger->log('error', $integration.': query string is not available');
 

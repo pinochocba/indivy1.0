@@ -79,6 +79,7 @@ class EmailController extends FormController
             'force'  => [
                 ['column' => 'e.variantParent', 'expr' => 'isNull'],
                 ['column' => 'e.translationParent', 'expr' => 'isNull'],
+                ['column' => 'e.businessgroup', 'expr' => 'eq', 'value' => $this->user->getBusinessGroup()->getId()],
             ],
         ];
         if (!$permissions['email:emails:viewother']) {

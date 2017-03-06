@@ -39,6 +39,11 @@ class Stage extends FormEntity
     private $description;
 
     /**
+     * @var BusinessGroup
+     */
+    private $businessgroup;
+
+    /**
      * @var int
      */
     private $weight = 0;
@@ -88,6 +93,10 @@ class Stage extends FormEntity
             ->setCustomRepositoryClass('Mautic\StageBundle\Entity\StageRepository');
 
         $builder->addIdColumns();
+
+        $builder->createField('businessgroup', 'integer')
+            ->columnName('businessgroup')
+            ->build();
 
         $builder->createField('weight', 'integer')
             ->build();
@@ -149,6 +158,32 @@ class Stage extends FormEntity
     {
         return $this->id;
     }
+
+    /**
+     * Set businessgroup.
+     *
+     * @param integer $businessgroup
+     *
+     * @return Form
+     */
+    public function setBusinessgroup($businessgroup)
+    {
+        $this->isChanged('businessgroup', $businessgroup);
+        $this->businessgroup = $businessgroup;
+
+        return $this;
+    }
+
+    /**
+     * Get businessgroup.
+     *
+     * @return integer
+     */
+    public function getBusinessgroup()
+    {
+        return $this->businessgroup;
+    }
+
 
     /**
      * Set weight.

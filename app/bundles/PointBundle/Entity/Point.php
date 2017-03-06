@@ -39,6 +39,11 @@ class Point extends FormEntity
     private $description;
 
     /**
+     * @var BusinessGroup
+     */
+    private $businessgroup;
+
+    /**
      * @var string
      */
     private $type;
@@ -100,6 +105,10 @@ class Point extends FormEntity
             ->addIndex(['type'], 'point_type_search');
 
         $builder->addIdColumns();
+
+        $builder->createField('businessgroup', 'integer')
+            ->columnName('businessgroup')
+            ->build();
 
         $builder->createField('type', 'string')
             ->length(50)
@@ -172,6 +181,32 @@ class Point extends FormEntity
     {
         return $this->id;
     }
+
+    /**
+     * Set businessgroup.
+     *
+     * @param integer $businessgroup
+     *
+     * @return Form
+     */
+    public function setBusinessgroup($businessgroup)
+    {
+        $this->isChanged('businessgroup', $businessgroup);
+        $this->businessgroup = $businessgroup;
+
+        return $this;
+    }
+
+    /**
+     * Get businessgroup.
+     *
+     * @return integer
+     */
+    public function getBusinessgroup()
+    {
+        return $this->businessgroup;
+    }
+
 
     /**
      * Set properties.

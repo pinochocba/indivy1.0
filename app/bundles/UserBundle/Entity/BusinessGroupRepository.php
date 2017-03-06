@@ -35,6 +35,31 @@ class BusinessGroupRepository extends CommonRepository
     }
 
     /**
+     * {@inheritdoc}
+     *
+     * @param int $id
+     *
+     * @return mixed|null
+     */
+    public function getEntity($id = 0)
+    {
+        try {
+            /** @var Lead $entity */
+            $entity = $this
+                ->createQueryBuilder('b')
+                ->select('b')
+                ->where('b.id = :businessgroupId')
+                ->setParameter('businessgroupId', $id)
+                ->getQuery()
+                ->getSingleResult();
+        } catch (\Exception $e) {
+            $entity = null;
+        }
+
+        return $entity;
+    }
+
+    /**
      * Get a list of roles.
      *
      * @param string $search

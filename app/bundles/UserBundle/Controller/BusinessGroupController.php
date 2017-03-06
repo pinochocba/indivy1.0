@@ -44,7 +44,12 @@ class BusinessGroupController extends FormController
       
         $orderBy    = $this->get('session')->get('mautic.businessgroup.orderby', 'r.name');
         $orderByDir = $this->get('session')->get('mautic.businessgroup.orderbydir', 'ASC');
-        $filter     = $this->request->get('search', $this->get('session')->get('mautic.businessgroup.filter', ''));
+        $filter = [ 'string' => $this->request->get('search', $this->get('session')->get('mautic.businessgroup.filter', '')),
+                'force' => [[   'column'    =>  'r.id',
+                'expr'      =>  'eq',
+                'value'     =>  $this->user->getBusinessGroup()->getId()
+            ]]
+        ];
         $this->get('session')->set('mautic.businessgroup.filter', $filter);
         $tmpl  = $this->request->isXmlHttpRequest() ? $this->request->get('tmpl', 'index') : 'index';
         $model = $this->getModel('user.businessgroup');

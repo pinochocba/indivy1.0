@@ -56,6 +56,11 @@ class Email extends FormEntity implements VariantEntityInterface, TranslationEnt
     private $description;
 
     /**
+     * @var BusinessGroup
+     */
+    private $businessgroup;
+
+    /**
      * @var string
      */
     private $subject;
@@ -223,6 +228,10 @@ class Email extends FormEntity implements VariantEntityInterface, TranslationEnt
         $builder->addIdColumns();
         $builder->createField('subject', 'text')
             ->nullable()
+            ->build();
+
+        $builder->createField('businessgroup', 'integer')
+            ->columnName('businessgroup')
             ->build();
 
         $builder->createField('fromAddress', 'string')
@@ -509,6 +518,31 @@ class Email extends FormEntity implements VariantEntityInterface, TranslationEnt
         $this->description = $description;
 
         return $this;
+    }
+
+    /**
+     * Set businessgroup.
+     *
+     * @param integer $businessgroup
+     *
+     * @return Form
+     */
+    public function setBusinessgroup($businessgroup)
+    {
+        $this->isChanged('businessgroup', $businessgroup);
+        $this->businessgroup = $businessgroup;
+
+        return $this;
+    }
+
+    /**
+     * Get businessgroup.
+     *
+     * @return integer
+     */
+    public function getBusinessgroup()
+    {
+        return $this->businessgroup;
     }
 
     /**

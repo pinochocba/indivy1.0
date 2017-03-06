@@ -57,7 +57,12 @@ class StageController extends FormController
         $search = $this->request->get('search', $this->get('session')->get('mautic.stage.filter', ''));
         $this->get('session')->set('mautic.stage.filter', $search);
 
-        $filter     = ['string' => $search, 'force' => []];
+        $filter = [ 'string' => $search,
+                'force' => [[   'column'    =>  's.businessgroup',
+                'expr'      =>  'eq',
+                'value'     =>  $this->user->getBusinessGroup()->getId()
+            ]]
+        ];
         $orderBy    = $this->get('session')->get('mautic.stage.orderby', 's.name');
         $orderByDir = $this->get('session')->get('mautic.stage.orderbydir', 'ASC');
         

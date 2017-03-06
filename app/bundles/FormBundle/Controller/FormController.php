@@ -66,7 +66,12 @@ class FormController extends CommonFormController
         $search = $this->request->get('search', $session->get('mautic.form.filter', ''));
         $session->set('mautic.form.filter', $search);
 
-        $filter = ['string' => $search, 'force' => []];
+        $filter = [ 'string' => $search,
+                    'force' => [[    'column'    =>  'f.businessgroup',
+                                    'expr'      =>  'eq',
+                                    'value'     =>  $this->user->getBusinessGroup()->getId()
+                    ]]
+        ];
         
         if (!$permissions['form:forms:viewother']) {
             $filter['force'][] = ['column' => 'f.createdBy', 'expr' => 'eq', 'value' => $this->user->getId()];

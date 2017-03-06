@@ -56,7 +56,12 @@ class TriggerController extends FormController
         $search = $this->request->get('search', $this->get('session')->get('mautic.point.trigger.filter', ''));
         $this->get('session')->set('mautic.point.trigger.filter', $search);
 
-        $filter     = ['string' => $search, 'force' => []];
+        $filter = [ 'string' => $search,
+                'force' => [[   'column'    =>  't.businessgroup',
+                'expr'      =>  'eq',
+                'value'     =>  $this->user->getBusinessGroup()->getId()
+            ]]
+        ];
         $orderBy    = $this->get('session')->get('mautic.point.trigger.orderby', 't.name');
         $orderByDir = $this->get('session')->get('mautic.point.trigger.orderbydir', 'ASC');
 

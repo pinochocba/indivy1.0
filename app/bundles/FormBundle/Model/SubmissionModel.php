@@ -165,8 +165,8 @@ class SubmissionModel extends CommonFormModel
         $ipAddress = $this->ipLookupHelper->getIpAddress();
         $submission->setIpAddress($ipAddress);
 
-        if (!empty($post['return'])) {
-            $referer = $post['return'];
+        if (!empty($post['referer'])) {
+            $referer = $post['referer'];
         } elseif (!empty($server['HTTP_REFERER'])) {
             $referer = $server['HTTP_REFERER'];
         } else {

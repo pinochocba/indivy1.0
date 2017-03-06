@@ -59,7 +59,12 @@ class AssetController extends FormController
         $search = $this->request->get('search', $this->get('session')->get('mautic.asset.filter', ''));
         $this->get('session')->set('mautic.asset.filter', $search);
 
-        $filter = ['string' => $search, 'force' => []];
+        $filter =   [   'string' => $search,
+                        'force' => [[   'column'    =>  'a.businessgroup',
+                                        'expr'      =>  'eq',
+                                        'value'     =>  $this->user->getBusinessGroup()->getId()
+                    ]]
+        ];
 
         if (!$permissions['asset:assets:viewother']) {
             $filter['force'][] =

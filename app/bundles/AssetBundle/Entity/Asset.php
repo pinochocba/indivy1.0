@@ -43,6 +43,11 @@ class Asset extends FormEntity
     private $description;
 
     /**
+     * @var BusinessGroup
+     */
+    private $businessgroup;
+
+    /**
      * @var string
      */
     private $storageLocation = 'local';
@@ -170,6 +175,10 @@ class Asset extends FormEntity
         $builder->addIdColumns('title');
 
         $builder->addField('alias', 'string');
+
+        $builder->createField('businessgroup', 'integer')
+            ->columnName('businessgroup')
+            ->build();
 
         $builder->createField('storageLocation', 'string')
             ->columnName('storage_location')
@@ -334,6 +343,31 @@ class Asset extends FormEntity
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * Set businessgroup.
+     *
+     * @param integer $businessgroup
+     *
+     * @return Form
+     */
+    public function setBusinessgroup($businessgroup)
+    {
+        $this->isChanged('businessgroup', $businessgroup);
+        $this->businessgroup = $businessgroup;
+
+        return $this;
+    }
+
+    /**
+     * Get businessgroup.
+     *
+     * @return integer
+     */
+    public function getBusinessgroup()
+    {
+        return $this->businessgroup;
     }
 
     /**

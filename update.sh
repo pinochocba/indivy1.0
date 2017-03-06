@@ -20,7 +20,7 @@ php app/console mautic:social:monitoring
 php app/console mautic:webhooks:process
 
 # iplookup:download
-php app/console mautic:iplookup:download
+#php app/console mautic:iplookup:download
 
 # iplookup:download
 #php app/console mautic:iplookup:download

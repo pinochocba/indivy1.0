@@ -63,7 +63,12 @@ class CampaignController extends FormController
         $search = $this->request->get('search', $session->get('mautic.campaign.filter', ''));
         $session->set('mautic.campaign.filter', $search);
 
-        $filter = ['string' => $search, 'force' => []];
+        $filter = [ 'string' => $search,
+                    'force' => [[   'column'    =>  'c.businessgroup',
+                    'expr'      =>  'eq',
+                    'value'     =>  $this->user->getBusinessGroup()->getId()
+            ]]
+        ];
 
         $currentFilters = $session->get('mautic.campaign.list_filters', []);
         $updatedFilters = $this->request->get('filters', false);

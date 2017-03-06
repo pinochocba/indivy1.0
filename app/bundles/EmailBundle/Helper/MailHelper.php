@@ -22,6 +22,7 @@ use Mautic\EmailBundle\Swiftmailer\Exception\BatchQueueMaxException;
 use Mautic\EmailBundle\Swiftmailer\Message\MauticMessage;
 use Mautic\EmailBundle\Swiftmailer\Transport\InterfaceTokenTransport;
 use Mautic\LeadBundle\Entity\Lead;
+use Mautic\UserBundle\Entity\BusinessGroup;
 
 /**
  * Class MailHelper.
@@ -307,6 +308,30 @@ class MailHelper
         } elseif (!$from = $this->message->getFrom()) {
             $this->setFrom($this->from);
         }
+
+        // Set parameters email for Businessgroup
+        $businessgroupId =
+            !is_null($this->email) ?
+                $this->email->getBusinessgroup() :
+                $this->factory->getUser()->getBusinessGroup()->getId();
+        $repo = $this->factory->getEntityManager()->getRepository('MauticUserBundle:BusinessGroup');
+        $businessgroup = $repo->getEntity($businessgroupId);
+
+        $fromName   = $businessgroup->getMailerFromName();
+        $fromEmail  = $businessgroup->getMailerFrom();
+        $password   = $businessgroup->getMailPassword();
+        $host       = $businessgroup->getMailerHost();
+        $port       = $businessgroup->getMailerPort();
+        $transport  = $businessgroup->getMailerTransport();
+        $encryption = $businessgroup->getMailerEncryption();
+
+        $this->setFrom($fromEmail, $fromName);
+        $this->transport->setUsername($fromEmail);
+        $this->transport->setPassword($password);
+        $this->transport->setHost($host);
+        $this->transport->setPort($port);
+        //$this->transport->setProtocol($transport);
+        $this->transport->setEncryption($encryption);
 
         // Set system return path if applicable
         if (!$isQueueFlush && ($bounceEmail = $this->generateBounceEmail($this->idHash))) {
