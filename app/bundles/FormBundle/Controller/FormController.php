@@ -327,6 +327,9 @@ class FormController extends CommonFormController
                             $alias = $model->cleanAlias($entity->getName(), '', 10);
                             $entity->setAlias($alias);
 
+                            //Set businessgroup
+                            $entity->setBusinessgroup($this->user->getBusinessGroup()->getId());
+
                             // Set timestamps
                             $model->setTimestamps($entity, true, false);
 

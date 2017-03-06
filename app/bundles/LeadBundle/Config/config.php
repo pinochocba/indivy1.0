@@ -86,6 +86,14 @@ return [
                 'path'       => '/companies/{objectAction}/{objectId}',
                 'controller' => 'MauticLeadBundle:Company:execute',
             ],
+            'mautic_webpage_index' => [
+                'path'       => '/webpage/{page}',
+                'controller' => 'MauticLeadBundle:WebPage:index',
+            ],
+            'mautic_webpage_action' => [
+                'path'       => '/webpage/{objectAction}/{objectId}',
+                'controller' => 'MauticLeadBundle:WebPage:execute',
+            ],
         ],
         'api' => [
             'mautic_api_getcontacts' => [
@@ -159,6 +167,12 @@ return [
     'menu' => [
         'main' => [
             'items' => [
+                'mautic.webpage.menu.index' => [
+                    'iconClass' => 'fa-list',
+                    'access'    => ['lead:leads:viewown', 'lead:leads:viewother'],
+                    'route'     => 'mautic_webpage_index',
+                    'priority'  => 85,
+                ],
                 'mautic.lead.leads' => [
                     'iconClass' => 'fa-user',
                     'access'    => ['lead:leads:viewown', 'lead:leads:viewother'],
@@ -420,6 +434,16 @@ return [
                 ],
                 'alias' => 'company_list',
             ],
+            'mautic.form.type.webpage' => [
+                'class'     => 'Mautic\LeadBundle\Form\Type\WebPageType',
+                'arguments' => 'translator',
+                'alias'     => 'webpage',
+            ],
+            'mautic.form.type.webpages' => [
+                'class'     => 'Mautic\LeadBundle\Form\Type\WebPageListType',
+                'arguments' => 'mautic.factory',
+                'alias'     => 'webpage_list',
+            ],
         ],
         'other' => [
             'mautic.lead.doctrine.subscriber' => [
@@ -483,6 +507,9 @@ return [
                     'mautic.lead.model.field',
                     'session',
                 ],
+            ],
+            'mautic.lead.model.webpage' => [
+                'class' => 'Mautic\LeadBundle\Model\WebPageModel',
             ],
         ],
     ],

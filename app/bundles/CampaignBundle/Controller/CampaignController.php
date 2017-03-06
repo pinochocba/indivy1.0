@@ -409,6 +409,9 @@ class CampaignController extends FormController
                         // Set lead sources
                         $model->setLeadSources($entity, $addedSources, $deletedSources);
 
+                        // Set Businessgroup
+                        $entity->setBusinessgroup($this->user->getBusinessGroup()->getId());
+
                         $connections = $session->get('mautic.campaign.'.$sessionId.'.events.canvassettings');
                         // Build and set Event entities
                         $model->setEvents($entity, $campaignEvents, $connections, $deletedEvents, $currentSources);
@@ -628,6 +631,8 @@ class CampaignController extends FormController
                     } else {
                         // If this is a clone, we need to save the entity first to properly build the events, sources and canvas settings
                         if ($isClone) {
+                            // Set Businessgroup
+                            $entity->setBusinessgroup($this->user->getBusinessGroup()->getId());
                             $model->getRepository()->saveEntity($entity);
                         }
 

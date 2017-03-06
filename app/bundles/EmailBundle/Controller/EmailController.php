@@ -512,6 +512,9 @@ class EmailController extends FormController
 
                     $entity->setCustomHtml($content);
 
+                    // Set businessgroup
+                    $entity->setBusinessgroup($this->user->getBusinessGroup()->getId());
+
                     //form is valid so process the data
                     $model->saveEntity($entity);
 

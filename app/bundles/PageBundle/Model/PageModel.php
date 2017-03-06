@@ -591,6 +591,17 @@ class PageModel extends FormModel
             $hit->setBrowserLanguages($languages);
         }
 
+        //get domain name
+        $parts = explode('.', parse_url($query['page_url'], PHP_URL_HOST));
+        $this->logger->warning($parts[1]);
+
+        //get webpageid
+        $webRepo = $this->em->getRepository('MauticLeadBundle:WebPage');
+        //$webEntity = $webRepo->getEntityByUrl($domain['host']);
+
+        //set webpage_leads
+        //$this->logger->warning($webEntity->getUrl());
+
         //device granularity
         $dd = new DeviceDetector($request->server->get('HTTP_USER_AGENT'));
 

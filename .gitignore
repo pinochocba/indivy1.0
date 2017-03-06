@@ -3,3 +3,4 @@
 /app/logs/*
 /vendor/
 /app/config/parameters.php
+/media

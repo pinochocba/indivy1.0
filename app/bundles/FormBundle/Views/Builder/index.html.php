@@ -53,6 +53,7 @@ $formId = $form['sessionId']->vars['data'];
                                 <?php
                                 echo $view['form']->row($form['postAction']);
                                 echo $view['form']->row($form['postActionProperty']);
+                                echo $view['form']->row($form['searchalias']);
                                 ?>
                             </div>
                         </div>
