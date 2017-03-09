@@ -128,6 +128,9 @@ return [
             ],
             'mautic.email.leadbundle.subscriber' => [
                 'class' => 'Mautic\EmailBundle\EventListener\LeadSubscriber',
+                'arguments' => [
+                    'mautic.email.model.email',
+                ],
             ],
             'mautic.email.pointbundle.subscriber' => [
                 'class'     => 'Mautic\EmailBundle\EventListener\PointSubscriber',

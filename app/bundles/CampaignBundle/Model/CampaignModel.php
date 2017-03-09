@@ -103,6 +103,16 @@ class CampaignModel extends CommonFormModel
     {
         return $this->em->getRepository('MauticCampaignBundle:Lead');
     }
+    /**
+     * @return \Mautic\CampaignBundle\Entity\LeadRepository
+     */
+    public function getLeadEventLogRepository()
+    {
+        $repo = $this->em->getRepository('MauticCampaignBundle:LeadEventLog');
+        $repo->setCurrentUser($this->userHelper->getUser());
+
+        return $repo;
+    }
 
     /**
      * {@inheritdoc}

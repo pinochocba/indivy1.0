@@ -23,6 +23,7 @@ use Mautic\CoreBundle\Model\VariantModelTrait;
 use Mautic\LeadBundle\Entity\Lead;
 use Mautic\LeadBundle\Entity\LeadDevice;
 use Mautic\LeadBundle\Entity\UtmTag;
+use Mautic\LeadBundle\Entity\WebPageLead;
 use Mautic\LeadBundle\Model\FieldModel;
 use Mautic\LeadBundle\Model\LeadModel;
 use Mautic\PageBundle\Entity\Hit;
@@ -129,7 +130,10 @@ class PageModel extends FormModel
      */
     public function getHitRepository()
     {
-        return $this->em->getRepository('MauticPageBundle:Hit');
+        $repo = $this->em->getRepository('MauticPageBundle:Hit');
+        $repo->setCurrentUser($this->userHelper->getUser());
+
+        return $repo;
     }
 
     /**
@@ -404,7 +408,7 @@ class PageModel extends FormModel
         }
 
         $hit = new Hit();
-        $hit->setDateHit(new \Datetime());
+        $hit->setDateHit(date('Y-m-d H:i:s'));
 
         // Check for existing IP
         $ipAddress = $this->ipLookupHelper->getIpAddress();
@@ -592,15 +596,32 @@ class PageModel extends FormModel
         }
 
         //get domain name
-        $parts = explode('.', parse_url($query['page_url'], PHP_URL_HOST));
-        $this->logger->warning($parts[1]);
+        $domain = parse_url($query['page_url'], PHP_URL_HOST);
+        $domain = str_replace("www.","",$domain); //remove www.//
+        $domain = str_replace("https://","",$domain); //remove https://
+        $domain = str_replace("http://","",$domain); //remove http://
 
         //get webpageid
         $webRepo = $this->em->getRepository('MauticLeadBundle:WebPage');
-        //$webEntity = $webRepo->getEntityByUrl($domain['host']);
+        $webEntity = $webRepo->getEntityByUrl($domain);
 
-        //set webpage_leads
-        //$this->logger->warning($webEntity->getUrl());
+        if($webEntity) {
+            //set webpage_leads
+            $webPageLead = new WebPageLead();
+            $webPageLead->setWebPage($webEntity);
+            $webPageLead->setLead($lead);
+            $webPageLead->setDateAdded(date('Y-m-d H:i:s'));
+
+            $webLeadRepo = $this->em->getRepository('MauticLeadBundle:WebPageLead');
+            $webResult = $webLeadRepo->getEntity($webEntity->getId(), $lead->getId());
+            if (!$webResult) {
+                $webLeadRepo->saveEntity($webPageLead);
+            }
+        }
+        else
+        {
+            $this->logger->error("The Domain: " . $domain . " is not registered");
+        }
 
         //device granularity
         $dd = new DeviceDetector($request->server->get('HTTP_USER_AGENT'));

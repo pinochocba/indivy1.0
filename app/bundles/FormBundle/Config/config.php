@@ -148,6 +148,7 @@ return [
                 'class'     => 'Mautic\FormBundle\EventListener\LeadSubscriber',
                 'arguments' => [
                     'mautic.form.model.form',
+                    'mautic.form.model.submission',
                     'mautic.page.model.page',
                 ],
             ],

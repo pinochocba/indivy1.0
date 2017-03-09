@@ -50,6 +50,16 @@ class UtmTagRepository extends CommonRepository
             ));
         }
 
+        // Filter by webpages_id - businessgroup
+        $businessgroup = $this->currentUser->getBusinessGroup()->getId();
+        $webList = $this->_em->getRepository('MauticLeadBundle:WebPage')->getWebPagesList($businessgroup);
+
+        $orx = $qb->expr()->orX();
+        foreach ($webList as $key => $url){
+            $orx->add($qb->expr()->like('ut.url', "'%" . $url . "%'"));
+        }
+        $qb->andWhere($orx);
+
         return $this->getTimelineResults($qb, $options, 'ut.utm_campaign', 'ut.date_added', ['query'], ['date_added']);
     }
 }

@@ -135,7 +135,10 @@ class SubmissionModel extends CommonFormModel
      */
     public function getRepository()
     {
-        return $this->em->getRepository('MauticFormBundle:Submission');
+        $repo = $this->em->getRepository('MauticFormBundle:Submission');
+        $repo->setCurrentUser($this->userHelper->getUser());
+
+        return $repo;
     }
 
     /**

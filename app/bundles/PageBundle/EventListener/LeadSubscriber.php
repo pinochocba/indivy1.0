@@ -83,7 +83,7 @@ class LeadSubscriber extends CommonSubscriber
         $lead = $event->getLead();
 
         /** @var \Mautic\PageBundle\Entity\HitRepository $hitRepository */
-        $hitRepository = $this->em->getRepository('MauticPageBundle:Hit');
+        $hitRepository = $this->pageModel->getHitRepository();
         $hits          = $hitRepository->getLeadHits($lead->getId(), $event->getQueryOptions());
 
         // Add to counter

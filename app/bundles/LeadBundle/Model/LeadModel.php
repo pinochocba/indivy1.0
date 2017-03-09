@@ -188,7 +188,10 @@ class LeadModel extends FormModel
      */
     public function getUtmTagRepository()
     {
-        return $this->em->getRepository('MauticLeadBundle:UtmTag');
+        $repo = $this->em->getRepository('MauticLeadBundle:UtmTag');
+        $repo->setCurrentUser($this->userHelper->getUser());
+
+        return $repo;
     }
 
     /**

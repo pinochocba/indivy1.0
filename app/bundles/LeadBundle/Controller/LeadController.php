@@ -57,6 +57,8 @@ class LeadController extends FormController
 
         /** @var \Mautic\LeadBundle\Model\LeadModel $model */
         $model   = $this->getModel('lead');
+        $webModel= $this->getModel('lead.webpage');
+        $webRepo = $webModel->getRepository();
         $session = $this->get('session');
         //set limits
         $limit = $session->get('mautic.lead.limit', $this->get('mautic.helper.core_parameters')->getParameter('default_pagelimit'));
@@ -71,8 +73,17 @@ class LeadController extends FormController
         //do some default filtering
         $orderBy    = $session->get('mautic.lead.orderby', 'l.last_active');
         $orderByDir = $session->get('mautic.lead.orderbydir', 'DESC');
+        $leadList   = $webRepo->getLeads($this->user->getBusinessGroup()->getId());
 
-        $filter      = ['string' => $search, 'force' => ''];
+        $filter      = ['string' => $search,
+                        'force' =>
+                            [[
+                                'column' => 'l.id',
+                                'expr'   => 'in',
+                                'value'  => $leadList,
+                            ]]
+        ];
+
         $translator  = $this->get('translator');
         $anonymous   = $translator->trans('mautic.lead.lead.searchcommand.isanonymous');
         $listCommand = $translator->trans('mautic.lead.lead.searchcommand.list');
@@ -84,13 +95,15 @@ class LeadController extends FormController
         $anonymousShowing = false;
         if ($indexMode != 'list' || ($indexMode == 'list' && strpos($search, $anonymous) === false)) {
             //remove anonymous leads unless requested to prevent clutter
-            $filter['force'] .= " !$anonymous";
+            array_push($filter['force'], " !$anonymous");
+            //$filter['force'] .= " !$anonymous";
         } elseif (strpos($search, $anonymous) !== false && strpos($search, '!'.$anonymous) === false) {
             $anonymousShowing = true;
         }
 
         if (!$permissions['lead:leads:viewother']) {
-            $filter['force'] .= " $mine";
+            array_push($filter['force'], " $mine");
+            //$filter['force'] .= " $mine";
         }
 
         $results = $model->getEntities(

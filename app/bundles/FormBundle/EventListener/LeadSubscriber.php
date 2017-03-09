@@ -12,6 +12,7 @@ namespace Mautic\FormBundle\EventListener;
 
 use Mautic\CoreBundle\EventListener\CommonSubscriber;
 use Mautic\FormBundle\Model\FormModel;
+use Mautic\FormBundle\Model\SubmissionModel;
 use Mautic\LeadBundle\Event\LeadMergeEvent;
 use Mautic\LeadBundle\Event\LeadTimelineEvent;
 use Mautic\LeadBundle\LeadEvents;
@@ -28,6 +29,11 @@ class LeadSubscriber extends CommonSubscriber
     protected $formModel;
 
     /**
+     * @var SubmissionModel
+     */
+    protected $submissionModel;
+
+    /**
      * @var PageModel
      */
     protected $pageModel;
@@ -36,11 +42,13 @@ class LeadSubscriber extends CommonSubscriber
      * LeadSubscriber constructor.
      *
      * @param FormModel $formModel
+     * @param SubmissionModel $submissionModel
      * @param PageModel $pageModel
      */
-    public function __construct(FormModel $formModel, PageModel $pageModel)
+    public function __construct(FormModel $formModel, SubmissionModel $submissionModel, PageModel $pageModel)
     {
         $this->formModel = $formModel;
+        $this->submissionModel = $submissionModel;
         $this->pageModel = $pageModel;
     }
 
@@ -72,7 +80,7 @@ class LeadSubscriber extends CommonSubscriber
         }
 
         /** @var \Mautic\FormBundle\Entity\SubmissionRepository $submissionRepository */
-        $submissionRepository = $this->em->getRepository('MauticFormBundle:Submission');
+        $submissionRepository = $this->submissionModel->getRepository();
         $rows                 = $submissionRepository->getSubmissions($event->getQueryOptions());
 
         // Add total to counter

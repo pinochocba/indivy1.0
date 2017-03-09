@@ -90,6 +90,11 @@ class LeadEventLogRepository extends EntityRepository
                 ->setParameter('scheduled', $options['scheduledState'], 'boolean');
         }
 
+        // Filter by businessgroup
+        $businessgroup = $this->currentUser->getBusinessGroup()->getId();
+        $query->andWhere($query->expr()->eq('c.businessgroup', ':businessgroup'))
+            ->setParameter('businessgroup', $businessgroup);
+
         return $this->getTimelineResults($query, $options, 'e.name', 'll.date_triggered', ['metadata'], ['dateTriggered', 'triggerDate']);
     }
 
@@ -166,6 +171,10 @@ class LeadEventLogRepository extends EntityRepository
             $query->andWhere('c.created_by = :userId')
                 ->setParameter('userId', $this->currentUser->getId());
         }
+
+        // Filter by businessgroup
+        $query->andWhere($query->expr()->eq('c.businessgroup', ':businessgroup'))
+            ->setParameter('businessgroup', $options['businessgroup']);
 
         return $query->execute()->fetchAll();
     }

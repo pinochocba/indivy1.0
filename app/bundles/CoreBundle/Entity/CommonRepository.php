@@ -285,8 +285,6 @@ class CommonRepository extends EntityRepository
                                 if (is_array($parameters)) {
                                     $queryParameters = array_merge($queryParameters, $parameters);
                                 }
-                                //print($expr);
-                                //print($parameters);
                             } else {
                                 //string so parse as advanced search
                                 $advancedFilterStrings[] = $f;

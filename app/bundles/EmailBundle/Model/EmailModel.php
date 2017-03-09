@@ -169,7 +169,10 @@ class EmailModel extends FormModel
      */
     public function getStatRepository()
     {
-        return $this->em->getRepository('MauticEmailBundle:Stat');
+        $repo = $this->em->getRepository('MauticEmailBundle:Stat');
+        $repo->setCurrentUser($this->userHelper->getUser());
+
+        return $repo;
     }
 
     /**

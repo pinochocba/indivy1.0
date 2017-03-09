@@ -89,6 +89,16 @@ class HitRepository extends CommonRepository
             $query->andWhere($query->expr()->eq('h.url', $query->expr()->literal($options['url'])));
         }
 
+        // Filter by webpages_id - businessgroup
+        $businessgroup = $this->currentUser->getBusinessGroup()->getId();
+        $webList = $this->_em->getRepository('MauticLeadBundle:WebPage')->getWebPagesList($businessgroup);
+
+        $orx = $query->expr()->orX();
+        foreach ($webList as $key => $url){
+            $orx->add($query->expr()->like('h.url', "'%" . $url . "%'"));
+        }
+        $query->andWhere($orx);
+
         return $this->getTimelineResults($query, $options, 'p.title', 'h.date_hit', ['query'], ['dateHit', 'dateLeft']);
     }
 

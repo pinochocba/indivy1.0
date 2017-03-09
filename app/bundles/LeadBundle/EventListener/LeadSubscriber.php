@@ -18,6 +18,7 @@ use Mautic\LeadBundle\Entity\DoNotContact;
 use Mautic\LeadBundle\Event as Events;
 use Mautic\LeadBundle\LeadEvents;
 use Mautic\LeadBundle\Model\ChannelTimelineInterface;
+use Mautic\LeadBundle\Model\LeadModel;
 
 /**
  * Class LeadSubscriber.
@@ -32,6 +33,11 @@ class LeadSubscriber extends CommonSubscriber
     protected $auditLogModel;
 
     /**
+     * @var LeadModel
+     */
+    protected $leadModel;
+
+    /**
      * @var IpLookupHelper
      */
     protected $ipLookupHelper;
@@ -42,10 +48,11 @@ class LeadSubscriber extends CommonSubscriber
      * @param IpLookupHelper $ipLookupHelper
      * @param AuditLogModel  $auditLogModel
      */
-    public function __construct(IpLookupHelper $ipLookupHelper, AuditLogModel $auditLogModel)
+    public function __construct(IpLookupHelper $ipLookupHelper, AuditLogModel $auditLogModel, LeadModel $leadModel)
     {
         $this->ipLookupHelper = $ipLookupHelper;
         $this->auditLogModel  = $auditLogModel;
+        $this->leadModel = $leadModel;
     }
 
     /**
@@ -433,7 +440,7 @@ class LeadSubscriber extends CommonSubscriber
     protected function addTimelineUtmEntries(Events\LeadTimelineEvent $event, $eventTypeKey, $eventTypeName)
     {
         $lead    = $event->getLead();
-        $utmTags = $this->em->getRepository('MauticLeadBundle:UtmTag')->getUtmTagsByLead($lead, $event->getQueryOptions());
+        $utmTags = $this->leadModel->getUtmTagRepository()->getUtmTagsByLead($lead, $event->getQueryOptions());
 
         // Add to counter
         $event->addToCounter($eventTypeKey, $utmTags);

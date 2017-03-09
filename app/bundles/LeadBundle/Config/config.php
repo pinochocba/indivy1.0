@@ -212,6 +212,8 @@ return [
                 'arguments' => [
                     'mautic.helper.ip_lookup',
                     'mautic.core.model.auditlog',
+                    'mautic.lead.model.lead',
+
                 ],
                 'methodCalls' => [
                     'setModelFactory' => ['mautic.model.factory'],

@@ -319,6 +319,7 @@ class MailHelper
 
         $fromName   = $businessgroup->getMailerFromName();
         $fromEmail  = $businessgroup->getMailerFrom();
+        $userName   = $businessgroup->getMailerUser();
         $password   = $businessgroup->getMailPassword();
         $host       = $businessgroup->getMailerHost();
         $port       = $businessgroup->getMailerPort();
@@ -326,7 +327,7 @@ class MailHelper
         $encryption = $businessgroup->getMailerEncryption();
 
         $this->setFrom($fromEmail, $fromName);
-        $this->transport->setUsername($fromEmail);
+        $this->transport->setUsername($userName);
         $this->transport->setPassword($password);
         $this->transport->setHost($host);
         $this->transport->setPort($port);

@@ -300,7 +300,10 @@ class AssetModel extends FormModel
      */
     public function getDownloadRepository()
     {
-        return $this->em->getRepository('MauticAssetBundle:Download');
+        $repo = $this->em->getRepository('MauticAssetBundle:Download');
+        $repo->setCurrentUser($this->userHelper->getUser());
+
+        return $repo;
     }
 
     /**

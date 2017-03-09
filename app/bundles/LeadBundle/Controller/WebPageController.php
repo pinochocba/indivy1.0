@@ -170,6 +170,8 @@ class WebPageController extends FormController
 
                 if ($valid = $this->isFormValid($form)) {
                     //form is valid so process the data
+
+                    $web->setBusinessGroup($this->user->getBusinessGroup()->getId());
                     $model->saveEntity($web);
 
                     $this->addFlash('mautic.core.notice.created',  [

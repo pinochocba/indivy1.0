@@ -181,7 +181,7 @@ class LeadSubscriber extends CommonSubscriber
         $lead = $event->getLead();
 
         /** @var \Mautic\CampaignBundle\Entity\LeadEventLogRepository $logRepository */
-        $logRepository = $this->em->getRepository('MauticCampaignBundle:LeadEventLog');
+        $logRepository = $this->campaignModel->getLeadEventLogRepository();
         $logs          = $logRepository->getLeadLogs($lead->getId(), $event->getQueryOptions());
         $eventSettings = $this->campaignModel->getEvents();
 

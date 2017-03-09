@@ -408,6 +408,11 @@ class StatRepository extends CommonRepository
             );
         }
 
+        // Filter by businessgroup
+        $businessgroup = $this->currentUser->getBusinessGroup()->getId();
+        $query->andWhere($query->expr()->eq('e.businessgroup', ':businessgroup'))
+            ->setParameter('businessgroup', $businessgroup);
+
         $timeToReadParser = function (&$stat) {
             $dateSent = new DateTimeHelper($stat['dateSent']);
             if (!empty($stat['dateSent']) && !empty($stat['dateRead'])) {

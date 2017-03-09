@@ -73,6 +73,11 @@ class DownloadRepository extends CommonRepository
             $query->andWhere($query->expr()->like('a.title', $query->expr()->literal('%'.$options['search'].'%')));
         }
 
+        // Filter by businessgroup
+        $businessgroup = $this->currentUser->getBusinessGroup()->getId();
+        $query->andWhere($query->expr()->eq('a.businessgroup', ':businessgroup'))
+            ->setParameter('businessgroup', $businessgroup);
+
         return $this->getTimelineResults($query, $options, 'a.title', 'd.date_download', [], ['date_download']);
     }
 

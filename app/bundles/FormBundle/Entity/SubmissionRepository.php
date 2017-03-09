@@ -245,6 +245,11 @@ class SubmissionRepository extends CommonRepository
             );
         }
 
+        // Filter by businessgroup
+        $businessgroup = $this->currentUser->getBusinessGroup()->getId();
+        $query->andWhere($query->expr()->eq('f.businessgroup', ':businessgroup'))
+            ->setParameter('businessgroup', $businessgroup);
+
         return $this->getTimelineResults($query, $options, 'f.name', 'fs.date_submitted', [], ['dateSubmitted']);
     }
 

@@ -11,6 +11,7 @@
 namespace Mautic\EmailBundle\EventListener;
 
 use Mautic\CoreBundle\EventListener\CommonSubscriber;
+use Mautic\EmailBundle\Model\EmailModel;
 use Mautic\LeadBundle\Event\LeadMergeEvent;
 use Mautic\LeadBundle\Event\LeadTimelineEvent;
 use Mautic\LeadBundle\LeadEvents;
@@ -20,6 +21,20 @@ use Mautic\LeadBundle\LeadEvents;
  */
 class LeadSubscriber extends CommonSubscriber
 {
+    /**
+     * @var EmailModel
+     */
+    protected $emailModel;
+
+    /**
+     * LeadSubscriber constructor.
+     *
+     * @param EmailModel $emailModel
+     */
+    public function __construct(EmailModel $emailModel)
+    {
+        $this->emailModel = $emailModel;
+    }
     /**
      * @return array
      */
@@ -73,7 +88,7 @@ class LeadSubscriber extends CommonSubscriber
         $lead = $event->getLead();
 
         /** @var \Mautic\EmailBundle\Entity\StatRepository $statRepository */
-        $statRepository        = $this->em->getRepository('MauticEmailBundle:Stat');
+        $statRepository        = $this->emailModel->getStatRepository();
         $queryOptions          = $event->getQueryOptions();
         $queryOptions['state'] = $state;
         $stats                 = $statRepository->getLeadStats($lead->getId(), $queryOptions);
