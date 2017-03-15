@@ -66,6 +66,26 @@ class DashboardController extends FormController
         $dateRangeFilter['date_to']   = $filter['dateTo']->format($humanFormat);
         $dateRangeForm                = $this->get('form.factory')->create('daterange', $dateRangeFilter, ['action' => $action]);
 
+        $businessgroup = $this->user->getBusinessGroup()->getId();
+        $webModel = $this->getModel('lead.webpage');
+        $webList = $webModel->getRepository()->getWebPagesIdList($businessgroup);
+        $leadList = $webModel->getRepository()->getLeadList($webList);
+        
+        $campaignModel = $this->getModel('campaign');
+        $campaignList = $campaignModel->getRepository()->getCampaignList($businessgroup);
+
+        $emailModel = $this->getModel('email');
+        $emailList = $emailModel->getRepository()->getEmailsList($businessgroup);
+
+        $formModel = $this->getModel('form');
+        $formList = $formModel->getRepository()->getFormsList($businessgroup);
+
+        $filter['lead_id'] = $leadList;
+        $filter['campaign_id'] = $campaignList;
+        $filter['email_id'] = $emailList;
+        $filter['form_id'] = $formList;
+        $filter['businessgroup'] = [$businessgroup];
+
         $model->populateWidgetsContent($widgets, $filter);
 
         return $this->delegateView([

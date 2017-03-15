@@ -314,6 +314,9 @@ class AssetController extends FormController
                     $entity->preUpload();
                     $entity->upload();
 
+                    $businessgroup = $this->user->getBusinessGroup()->getId();
+                    $entity->setBusinessgroup($businessgroup);
+
                     //form is valid so process the data
                     $model->saveEntity($entity);
 

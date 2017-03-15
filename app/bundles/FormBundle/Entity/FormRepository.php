@@ -61,6 +61,10 @@ class FormRepository extends CommonRepository
             $q->andWhere($q->expr()->eq('f.createdBy', ':id'))
                 ->setParameter('id', $this->currentUser->getId());
         }
+        else{
+            $q->andWhere($q->expr()->eq('f.businessgroup', ':bid'))
+                ->setParameter('bid', $this->currentUser->getBusinessGroup()->getId());
+        }
 
         if (!empty($formType)) {
             $q->andWhere(
@@ -76,6 +80,33 @@ class FormRepository extends CommonRepository
         }
 
         return $q->getQuery()->getArrayResult();
+    }
+
+    /**
+     * Returns a list of all forms for a specific businessgroup.
+     *
+     * @param null businessgroup
+     *
+     * @return array
+     */
+    public function getFormsList($businessgroup = 0)
+    {
+        $q = $this->_em->getConnection()->createQueryBuilder();
+
+        $q->select('f.id')
+            ->from(MAUTIC_TABLE_PREFIX.'forms', 'f');
+
+        $q->where('f.businessgroup = :bid');
+        $q->setParameter('bid', $businessgroup);
+
+        $results = $q->execute()->fetchAll();
+
+        $return = [];
+        foreach ($results as $r) {
+            $return[] = $r['id'];
+        }
+
+        return $return;
     }
 
     /**

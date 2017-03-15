@@ -1876,12 +1876,18 @@ class EventModel extends CommonFormModel
     {
         $chart = new LineChart($unit, $dateFrom, $dateTo, $dateFormat);
         $query = new ChartQuery($this->em->getConnection(), $dateFrom, $dateTo);
+        $locFilter = $filter['id'];
+        unset($filter['id']);
         $q     = $query->prepareTimeDataQuery('campaign_lead_event_log', 'date_triggered', $filter);
 
         if (!$canViewOthers) {
             $q->join('t', MAUTIC_TABLE_PREFIX.'campaigns', 'c', 'c.id = c.campaign_id')
                 ->andWhere('c.created_by = :userId')
                 ->setParameter('userId', $this->userHelper->getUser()->getId());
+        }
+        else {
+            $q->join('t', MAUTIC_TABLE_PREFIX.'campaigns', 'c', 'c.id = t.campaign_id')
+                ->andWhere($q->expr()->in('c.id', $locFilter));
         }
 
         $data = $query->loadAndBuildTimeData($q);

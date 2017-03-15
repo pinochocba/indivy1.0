@@ -97,6 +97,14 @@ class DashboardSubscriber extends MainDashboardSubscriber
                 $params['filter']['flag'] = $params['flag'];
             }
 
+            if (isset($params['lead_id'])){
+                $params['filter']['id'] = $params['lead_id'];
+            }
+
+            if (isset($params['businessgroup'])){
+                $params['filter']['businessgroup'] = $params['businessgroup'];
+            }
+
             if (!$event->isCached()) {
                 $event->setTemplateData([
                     'chartType'   => 'line',
@@ -137,9 +145,19 @@ class DashboardSubscriber extends MainDashboardSubscriber
         if ($event->getType() == 'map.of.leads') {
             if (!$event->isCached()) {
                 $params = $event->getWidget()->getParams();
+
+                if (isset($params['lead_id'])){
+                    $params['filter']['id'] = $params['lead_id'];
+                }
+
                 $event->setTemplateData([
                     'height' => $event->getWidget()->getHeight() - 80,
-                    'data'   => $this->leadModel->getLeadMapData($params['dateFrom'], $params['dateTo'], $canViewOthers),
+                    'data'   => $this->leadModel->getLeadMapData(
+                        $params['dateFrom'],
+                        $params['dateTo'],
+                        $params['filter'],
+                        $canViewOthers
+                    ),
                 ]);
             }
 
@@ -153,6 +171,10 @@ class DashboardSubscriber extends MainDashboardSubscriber
             if (!$event->isCached()) {
                 $params = $event->getWidget()->getParams();
 
+                if (isset($params['businessgroup'])){
+                    $params['filter']['businessgroup'] = $params['businessgroup'];
+                }
+
                 if (empty($params['limit'])) {
                     // Count the list limit from the widget height
                     $limit = round((($event->getWidget()->getHeight() - 80) / 35) - 1);
@@ -160,7 +182,12 @@ class DashboardSubscriber extends MainDashboardSubscriber
                     $limit = $params['limit'];
                 }
 
-                $lists = $this->leadListModel->getTopLists($limit, $params['dateFrom'], $params['dateTo'], $canViewOthers);
+                $lists = $this->leadListModel->getTopLists(
+                    $limit,
+                    $params['dateFrom'],
+                    $params['dateTo'],
+                    $params['filter']
+                );
                 $items = [];
 
                 // Build table rows with links
@@ -304,7 +331,16 @@ class DashboardSubscriber extends MainDashboardSubscriber
                     $limit = $params['limit'];
                 }
 
-                $owners = $this->leadModel->getTopOwners($limit, $params['dateFrom'], $params['dateTo']);
+                if (isset($params['lead_id'])){
+                    $params['filter']['t.id'] = $params['lead_id'];
+                }
+
+                $owners = $this->leadModel->getTopOwners(
+                    $limit,
+                    $params['dateFrom'],
+                    $params['dateTo'],
+                    $params['filter']
+                );
                 $items  = [];
 
                 // Build table rows with links
@@ -359,7 +395,16 @@ class DashboardSubscriber extends MainDashboardSubscriber
                     $limit = $params['limit'];
                 }
 
-                $creators = $this->leadModel->getTopCreators($limit, $params['dateFrom'], $params['dateTo']);
+                if (isset($params['lead_id'])){
+                    $params['filter']['id'] = $params['lead_id'];
+                }
+
+                $creators = $this->leadModel->getTopCreators(
+                    $limit,
+                    $params['dateFrom'],
+                    $params['dateTo'],
+                    $params['filter']
+                );
                 $items    = [];
 
                 // Build table rows with links
@@ -407,7 +452,17 @@ class DashboardSubscriber extends MainDashboardSubscriber
                     $limit = $params['limit'];
                 }
 
-                $leads = $this->leadModel->getLeadList($limit, $params['dateFrom'], $params['dateTo'], $canViewOthers, [], ['canViewOthers' => $canViewOthers]);
+                if (isset($params['lead_id'])){
+                    $params['filter']['id'] = $params['lead_id'];
+                }
+
+                $leads = $this->leadModel->getLeadList(
+                    $limit,
+                    $params['dateFrom'],
+                    $params['dateTo'],
+                    $params['filter'],
+                    ['canViewOthers' => $canViewOthers]
+                );
                 $items = [];
 
                 // Build table rows with links

@@ -85,6 +85,10 @@ class DashboardSubscriber extends MainDashboardSubscriber
                 $params['filter']['flag'] = $params['flag'];
             }
 
+            if (isset($params['lead_id'])) {
+                $params['filter']['lead_id'] = $params['lead_id'];
+            }
+
             if (!$event->isCached()) {
                 $event->setTemplateData([
                     'chartType'   => 'line',
@@ -107,10 +111,20 @@ class DashboardSubscriber extends MainDashboardSubscriber
         if ($event->getType() == 'unique.vs.returning.leads') {
             if (!$event->isCached()) {
                 $params = $event->getWidget()->getParams();
+
+                if (isset($params['lead_id'])) {
+                    $params['filter']['lead_id'] = $params['lead_id'];
+                }
+
                 $event->setTemplateData([
                     'chartType'   => 'pie',
                     'chartHeight' => $event->getWidget()->getHeight() - 80,
-                    'chartData'   => $this->pageModel->getNewVsReturningPieChartData($params['dateFrom'], $params['dateTo'], [], $canViewOthers),
+                    'chartData'   => $this->pageModel->getNewVsReturningPieChartData(
+                        $params['dateFrom'],
+                        $params['dateTo'],
+                        $params['filter'],
+                        $canViewOthers
+                    ),
                 ]);
             }
 
@@ -121,10 +135,20 @@ class DashboardSubscriber extends MainDashboardSubscriber
         if ($event->getType() == 'dwell.times') {
             if (!$event->isCached()) {
                 $params = $event->getWidget()->getParams();
+
+                if (isset($params['lead_id'])) {
+                    $params['filter']['lead_id'] = $params['lead_id'];
+                }
+
                 $event->setTemplateData([
                     'chartType'   => 'pie',
                     'chartHeight' => $event->getWidget()->getHeight() - 80,
-                    'chartData'   => $this->pageModel->getDwellTimesPieChartData($params['dateFrom'], $params['dateTo'], [], $canViewOthers),
+                    'chartData'   => $this->pageModel->getDwellTimesPieChartData(
+                        $params['dateFrom'],
+                        $params['dateTo'],
+                        $params['filter'],
+                        $canViewOthers
+                    ),
                 ]);
             }
 
@@ -224,6 +248,10 @@ class DashboardSubscriber extends MainDashboardSubscriber
             $widget = $event->getWidget();
             $params = $widget->getParams();
 
+            if (isset($params['lead_id'])) {
+                $params['filter']['lead_id'] = $params['lead_id'];
+            }
+
             if (!$event->isCached()) {
                 $event->setTemplateData([
                     'chartType'   => 'pie',
@@ -231,7 +259,7 @@ class DashboardSubscriber extends MainDashboardSubscriber
                     'chartData'   => $this->pageModel->getDeviceGranularityData(
                         $params['dateFrom'],
                         $params['dateTo'],
-                        [],
+                        $params['filter'],
                         $canViewOthers
                     ),
                 ]);

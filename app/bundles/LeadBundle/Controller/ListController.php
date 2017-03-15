@@ -174,6 +174,11 @@ class ListController extends FormController
             if (!$cancelled = $this->isFormCancelled($form)) {
                 if ($valid = $this->isFormValid($form)) {
                     //form is valid so process the data
+
+                    //set businessgroup
+                    $businessgroup = $this->user->getBusinessGroup()->getId();
+                    $list->setBusinessgroup($businessgroup);
+
                     $model->saveEntity($list);
 
                     $this->addFlash('mautic.core.notice.created',  [

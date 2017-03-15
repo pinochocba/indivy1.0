@@ -83,6 +83,11 @@ class DashboardSubscriber extends MainDashboardSubscriber
             $widget = $event->getWidget();
             $params = $widget->getParams();
 
+            if(isset($params['lead_id']))
+                $params['filter']['lead_id'] = $params['lead_id'];
+            if(isset($params['campaign_id']))
+                $params['filter']['id'] = $params['campaign_id'];
+
             if (!$event->isCached()) {
                 $event->setTemplateData([
                     'chartType'   => 'line',
@@ -92,6 +97,7 @@ class DashboardSubscriber extends MainDashboardSubscriber
                         $params['dateFrom'],
                         $params['dateTo'],
                         $params['dateFormat'],
+                        $params['filter'],
                         $canViewOthers
                     ),
                 ]);
@@ -105,6 +111,11 @@ class DashboardSubscriber extends MainDashboardSubscriber
             $widget = $event->getWidget();
             $params = $widget->getParams();
 
+            if(isset($params['lead_id']))
+                $params['filter']['lead_id'] = $params['lead_id'];
+            if(isset($params['campaign_id']))
+                $params['filter']['id'] = $params['campaign_id'];
+
             if (!$event->isCached()) {
                 $event->setTemplateData([
                     'chartType'   => 'line',
@@ -114,6 +125,7 @@ class DashboardSubscriber extends MainDashboardSubscriber
                         $params['dateFrom'],
                         $params['dateTo'],
                         $params['dateFormat'],
+                        $params['filter'],
                         $canViewOthers
                     ),
                 ]);

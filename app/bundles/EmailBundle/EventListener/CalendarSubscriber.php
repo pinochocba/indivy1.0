@@ -50,11 +50,14 @@ class CalendarSubscriber extends CommonSubscriber
                 $query->expr()->lte('es.date_sent', ':end')
             ))
             ->groupBy('e.id, es.email_id, e.subject, es.date_sent, e.plain_text, cat.color, es.lead_id, l.firstname, l.lastname, l.email')
+            ->setParameter('bid', $dates['businessgroup'])
             ->setParameter('bundle', 'email')
             ->setParameter('start', $dates['start_date'])
             ->setParameter('end', $dates['end_date'])
             ->setFirstResult(0)
             ->setMaxResults(15);
+
+        $query->andWhere($query->expr()->eq('e.businessgroup', $dates['businessgroup']));
 
         $results = $query->execute()->fetchAll();
 

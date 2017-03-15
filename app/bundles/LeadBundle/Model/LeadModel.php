@@ -31,6 +31,7 @@ use Mautic\LeadBundle\Entity\PointsChangeLog;
 use Mautic\LeadBundle\Entity\StagesChangeLog;
 use Mautic\LeadBundle\Entity\Tag;
 use Mautic\LeadBundle\Entity\UtmTag;
+use Mautic\LeadBundle\Entity\WebPageLead;
 use Mautic\LeadBundle\Event\LeadChangeEvent;
 use Mautic\LeadBundle\Event\LeadEvent;
 use Mautic\LeadBundle\Event\LeadMergeEvent;
@@ -1556,6 +1557,23 @@ class LeadModel extends FormModel
             }
         }
 
+        // set webpages_leads
+        $businessgroup = $this->factory->getUser()->getBusinessGroup()->getId();
+        $webModel = $this->factory->getModel('lead.webpage');
+        $webRepo = $webModel->getRepository();
+        $webEntity = $webRepo->getEntityByBusinessgroup($businessgroup);
+
+        $webPageLead = new WebPageLead();
+        $webPageLead->setWebPage($webEntity);
+        $webPageLead->setLead($lead);
+        $webPageLead->setDateAdded(date('Y-m-d H:i:s'));
+
+        $webLeadRepo = $webModel->getWebPageLeadRepository();
+        $webResult = $webLeadRepo->getEntity($webEntity->getId(), $lead->getId());
+        if (!$webResult) {
+            $webLeadRepo->saveEntity($webPageLead);
+        }
+
         return $merged;
     }
 
@@ -1822,6 +1840,11 @@ class LeadModel extends FormModel
             unset($filter['flag']);
         }
 
+        if (isset($filter['businessgroup'])){
+            $businessgroup['businessgroup'] = $filter['businessgroup'];
+            unset($filter['businessgroup']);
+        }
+
         if (!$canViewOthers) {
             $filter['owner_id'] = $this->userHelper->getUser()->getId();
         }
@@ -1838,7 +1861,7 @@ class LeadModel extends FormModel
         ];
 
         if ($flag == 'top') {
-            $topLists = $this->leadListModel->getTopLists(6, $dateFrom, $dateTo);
+            $topLists = $this->leadListModel->getTopLists(6, $dateFrom, $dateTo, $businessgroup);
             if ($topLists) {
                 foreach ($topLists as $list) {
                     $filter['leadlist_id'] = [
@@ -1850,7 +1873,7 @@ class LeadModel extends FormModel
                 }
             }
         } elseif ($flag == 'topIdentifiedVsAnonymous') {
-            $topLists = $this->leadListModel->getTopLists(3, $dateFrom, $dateTo);
+            $topLists = $this->leadListModel->getTopLists(3, $dateFrom, $dateTo, $businessgroup);
             if ($topLists) {
                 foreach ($topLists as $list) {
                     $anonymousFilter['leadlist_id'] = [
@@ -1982,6 +2005,8 @@ class LeadModel extends FormModel
         $chartQuery->applyFilters($q, $filters);
         $chartQuery->applyDateFilters($q, 'date_added');
 
+        //printf("%s\n", $q->getSQL());
+
         $results = $q->execute()->fetchAll();
 
         return $results;
@@ -2046,6 +2071,9 @@ class LeadModel extends FormModel
         if (empty($options['includeAnonymous'])) {
             $q->andWhere($q->expr()->isNotNull('t.date_identified'));
         }
+
+        //printf("%s\n", $q->getSQL());
+
         $results = $q->execute()->fetchAll();
 
         if ($results) {

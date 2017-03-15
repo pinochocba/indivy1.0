@@ -114,6 +114,28 @@ class LeadListRepository extends CommonRepository
     }
 
     /**
+     * Returns a list of all list for a specific businessgroup.
+     *
+     * @param null businessgroup
+     *
+     * @return array
+     */
+    public function getLeadList($businessgroup = 0)
+    {
+        $q = $this->_em->getConnection()->createQueryBuilder();
+
+        $q->select('ll.id, ll.name')
+            ->from(MAUTIC_TABLE_PREFIX.'lead_lists', 'll');
+
+        $q->where('ll.businessgroup = :bid');
+        $q->setParameter('bid', $businessgroup);
+
+        $results = $q->execute()->fetchAll();
+
+        return $results;
+    }
+
+    /**
      * Get lists for a specific lead.
      *
      * @param      $lead

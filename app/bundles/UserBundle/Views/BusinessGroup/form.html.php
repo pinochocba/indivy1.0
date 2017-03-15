@@ -15,9 +15,9 @@ $view['assets']->addScriptDeclaration('MauticVars.permissionList = '.json_encode
 $objectId = $form->vars['data']->getId();
 if (!empty($objectId)) {
     $name   = $form->vars['data']->getName();
-    $header = $view['translator']->trans('mautic.user.role.header.edit', ['%name%' => $name]);
+    $header = $view['translator']->trans('mautic.user.businessgroup.header.edit', ['%name%' => $name]);
 } else {
-    $header = $view['translator']->trans('mautic.user.role.header.new');
+    $header = $view['translator']->trans('mautic.user.businessgroup.header.new');
 }
 $view['slots']->set('headerTitle', $header);
 ?>
@@ -28,6 +28,7 @@ $view['slots']->set('headerTitle', $header);
 		<!-- tabs controls -->
 		<ul class="bg-auto nav nav-tabs pr-md pl-md">
 			<li class="active"><a href="#details-container" role="tab" data-toggle="tab"><?php echo $view['translator']->trans('mautic.core.details'); ?></a></li>
+            <li class=""><a href="#email-container" role="tab" data-toggle="tab"><?php echo $view['translator']->trans('mautic.user.businessgroup.email.config'); ?></a></li>
 			<li class=""><a href="#permissions-container" role="tab" data-toggle="tab"><?php echo $view['translator']->trans('mautic.user.role.permissions'); ?></a></li>
 		</ul>
 		<!--/ tabs controls -->
@@ -36,8 +37,10 @@ $view['slots']->set('headerTitle', $header);
 			<div class="tab-pane fade in active bdr-w-0 height-auto" id="details-container">
 				<div class="row">
 					<div class="pa-md">
-						<div class="col-md-6">
-							<?php echo $view['form']->row($form['name']); ?>
+						<div class="col-md-6<?php echo (count($form['name']->vars['errors'])) ? ' has-error' : ''; ?>">
+							<label class="control-label mb-xs"><?php echo $view['form']->label($form['name']); ?></label>
+							<?php echo $view['form']->widget($form['name'], ['attr' => ['placeholder' => $form['name']->vars['label']]]); ?>
+							<?php echo $view['form']->errors($form['name']); ?>
 						</div>
 						<div class="col-md-6">
 							<?php echo $view['form']->row($form['isAdmin']); ?>
@@ -53,11 +56,77 @@ $view['slots']->set('headerTitle', $header);
 				</div>
 			</div>
 
+            <div class="tab-pane fade" id="email-container">
+                <div class="row">
+                    <div class="pa-md">
+						<div class="col-md-6<?php echo (count($form['mailer_from_name']->vars['errors'])) ? ' has-error' : ''; ?>">
+								<label class="control-label mb-xs"><?php echo $view['form']->label($form['mailer_from_name']); ?></label>
+								<?php echo $view['form']->widget($form['mailer_from_name'], ['attr' => ['placeholder' => $form['mailer_from_name']->vars['label']]]); ?>
+								<?php echo $view['form']->errors($form['mailer_from_name']); ?>
+                        </div>
+						<div class="col-md-6<?php echo (count($form['mailer_from']->vars['errors'])) ? ' has-error' : ''; ?>">
+							<label class="control-label mb-xs"><?php echo $view['form']->label($form['mailer_from']); ?></label>
+							<?php echo $view['form']->widget($form['mailer_from'], ['attr' => ['placeholder' => $form['mailer_from']->vars['label']]]); ?>
+							<?php echo $view['form']->errors($form['mailer_from']); ?>
+						</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="pa-md">
+                        <div class="col-md-6">
+                            <?php echo $view['form']->row($form['mailer_return_path']); ?>
+                        </div>
+                        <div class="col-md-6">
+                            <?php echo $view['form']->row($form['mailer_spool_type']); ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="pa-md">
+                        <div class="col-md-6">
+                            <?php echo $view['form']->row($form['mailer_transport']); ?>
+                        </div>
+                        <div class="col-md-6">
+                            <?php echo $view['form']->row($form['mailer_host']); ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="pa-md">
+                        <div class="col-md-6">
+                            <?php echo $view['form']->row($form['mailer_port']); ?>
+                        </div>
+                        <div class="col-md-6">
+                            <?php echo $view['form']->row($form['mailer_auth_mode']); ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="pa-md">
+                        <div class="col-md-6">
+                            <?php echo $view['form']->row($form['mailer_user']); ?>
+                        </div>
+                        <div class="col-md-6">
+                            <?php echo $view['form']->row($form['mailer_password']); ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="pa-md">
+                        <div class="col-md-6">
+                            <?php echo $view['form']->row($form['mailer_encryption']); ?>
+                        </div>
+                        <div class="col-md-6">
+                            <?php echo $view['form']->row($form['mailer_test_connection_button']); ?>
+                            <?php echo $view['form']->row($form['mailer_test_send_button']); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 			<?php $hidePerms = $form['isAdmin']->vars['data']; ?>
 			<div class="tab-pane fade bdr-w-0" id="permissions-container">
-				<div id="rolePermissions"<?php if ($hidePerms) {
-    echo ' class="hide"';
-} ?>>
+				<div id="rolePermissions"<?php if ($hidePerms) {echo ' class="hide"';} ?>>
 					<!-- start: box layout -->
 					<div class="box-layout">
 						<!-- step container -->

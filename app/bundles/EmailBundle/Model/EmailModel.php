@@ -1895,12 +1895,12 @@ class EmailModel extends FormModel
      *
      * @return array
      */
-    public function getDeviceGranularityPieChartData($dateFrom, $dateTo, $canViewOthers = true)
+    public function getDeviceGranularityPieChartData($dateFrom, $dateTo, $filter = [], $canViewOthers = true)
     {
         $chart = new PieChart();
 
         $deviceStats = $this->getStatDeviceRepository()->getDeviceStats(
-            null,
+            $filter['email_id'],
             $dateFrom,
             $dateTo
         );
@@ -1949,6 +1949,7 @@ class EmailModel extends FormModel
             $chartQuery->applyDateFilters($q, 'date_read');
         }
 
+        //printf("%s\n", $q->getSQL());
         $results = $q->execute()->fetchAll();
 
         return $results;
@@ -1981,6 +1982,8 @@ class EmailModel extends FormModel
         $chartQuery->applyFilters($q, $filters);
         $chartQuery->applyDateFilters($q, 'date_added');
 
+        //printf("%s\n", $q->getSQL());
+
         $results = $q->execute()->fetchAll();
 
         return $results;
@@ -2006,6 +2009,7 @@ class EmailModel extends FormModel
                 'eventType'     => 'action',
                 'limit'         => $limit,
                 'canViewOthers' => $canViewOthers,
+                'businessgroup' => $this->userHelper->getUser()->getBusinessGroup()->getId(),
             ]
         );
 

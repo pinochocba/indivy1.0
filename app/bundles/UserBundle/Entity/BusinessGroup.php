@@ -107,7 +107,7 @@ class BusinessGroup extends FormEntity
     /**
      * @var string
      */
-    private $mailPassword;
+    private $mailerPassword;
 
     /**
      * @var string
@@ -174,8 +174,8 @@ class BusinessGroup extends FormEntity
             ->columnName('mailer_user')
             ->build();
 
-        $builder->createField('mailPassword', 'string')
-            ->columnName('mail_password')
+        $builder->createField('mailerPassword', 'string')
+            ->columnName('mailer_password')
             ->build();
 
         $builder->createField('mailerSpoolType', 'string')
@@ -210,7 +210,7 @@ class BusinessGroup extends FormEntity
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraint('name', new Assert\NotBlank(
-            ['message' => 'mautic.core.name.required']
+            ['message' => 'mautic.user.businessgroup.name.notblank']
         ));
         $metadata->addPropertyConstraint('mailerFromName', new Assert\NotBlank(
             ['message' => 'mautic.core.value.required']
@@ -655,26 +655,26 @@ class BusinessGroup extends FormEntity
     }
 
     /**
-     * Get mailPassword
+     * Get mailerPassword
      *
      * @return string
      */
-    public function getMailPassword()
+    public function getMailerPassword()
     {
-        return $this->mailPassword;
+        return $this->mailerPassword;
     }
 
     /**
-     * Set mailPassword.
+     * Set mailerPassword.
      *
-     * @param string $mailPassword
+     * @param string $mailerPassword
      *
      * @return BusinessGroup
      */
-    public function setMailPassword($mailPassword)
+    public function setMailerPassword($mailerPassword)
     {
-        $this->isChanged('mailPassword', $mailPassword);
-        $this->mailPassword = $mailPassword;
+        $this->isChanged('mailerPassword', $mailerPassword);
+        $this->mailerPassword = $mailerPassword;
 
         return $this;
     }

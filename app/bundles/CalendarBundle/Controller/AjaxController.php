@@ -31,6 +31,7 @@ class AjaxController extends CommonAjaxController
         $dates = [
             'start_date' => $request->query->get('start'),
             'end_date'   => $request->query->get('end'),
+            'businessgroup' => $this->factory->getUser()->getBusinessGroup()->getId(),
         ];
 
         /* @type \Mautic\CalendarBundle\Model\CalendarModel $model */

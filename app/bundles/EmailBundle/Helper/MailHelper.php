@@ -320,7 +320,7 @@ class MailHelper
         $fromName   = $businessgroup->getMailerFromName();
         $fromEmail  = $businessgroup->getMailerFrom();
         $userName   = $businessgroup->getMailerUser();
-        $password   = $businessgroup->getMailPassword();
+        $password   = $businessgroup->getMailerPassword();
         $host       = $businessgroup->getMailerHost();
         $port       = $businessgroup->getMailerPort();
         $transport  = $businessgroup->getMailerTransport();

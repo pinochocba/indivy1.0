@@ -118,6 +118,33 @@ class CampaignRepository extends CommonRepository
     }
 
     /**
+     * Returns a list of all campaigns for a specific businessgroup.
+     *
+     * @param null businessgroup
+     *
+     * @return array
+     */
+    public function getCampaignList($businessgroup = 0)
+    {
+        $q = $this->_em->getConnection()->createQueryBuilder();
+
+        $q->select('c.id')
+            ->from(MAUTIC_TABLE_PREFIX.'campaigns', 'c');
+
+        $q->where('c.businessgroup = :bid');
+        $q->setParameter('bid', $businessgroup);
+
+        $results = $q->execute()->fetchAll();
+
+        $return = [];
+        foreach ($results as $r) {
+            $return[] = $r['id'];
+        }
+
+        return $return;
+    }
+
+    /**
      * Returns a list of all published (and active) campaigns that specific lead lists are part of.
      *
      * @param int|array $leadLists

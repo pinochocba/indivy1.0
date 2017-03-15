@@ -590,7 +590,7 @@ class CampaignModel extends CommonFormModel
             case null:
                 $choices['lists'] = [];
 
-                $lists = (empty($options['global_only'])) ? $this->leadListModel->getUserLists() : $this->leadListModel->getGlobalLists();
+                $lists = (empty($options['global_only'])) ? $this->leadListModel->getUsersLists() : $this->leadListModel->getGlobalLists();
 
                 foreach ($lists as $list) {
                     $choices['lists'][$list['id']] = $list['name'];
@@ -1138,12 +1138,18 @@ class CampaignModel extends CommonFormModel
     {
         $chart = new LineChart($unit, $dateFrom, $dateTo, $dateFormat);
         $query = new ChartQuery($this->em->getConnection(), $dateFrom, $dateTo);
+        $locFilter = $filter['id'];
+        unset($filter['id']);
         $q     = $query->prepareTimeDataQuery('campaign_leads', 'date_added', $filter);
 
         if (!$canViewOthers) {
             $q->join('t', MAUTIC_TABLE_PREFIX.'campaigns', 'c', 'c.id = c.campaign_id')
                 ->andWhere('c.created_by = :userId')
                 ->setParameter('userId', $this->userHelper->getUser()->getId());
+        }
+        else {
+            $q->join('t', MAUTIC_TABLE_PREFIX.'campaigns', 'c', 'c.id = t.campaign_id')
+                ->andWhere($q->expr()->in('c.id', $locFilter));
         }
 
         $data = $query->loadAndBuildTimeData($q);

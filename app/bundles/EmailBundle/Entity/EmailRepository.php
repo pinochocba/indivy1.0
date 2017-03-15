@@ -323,6 +323,10 @@ class EmailRepository extends CommonRepository
             $q->andWhere($q->expr()->eq('e.createdBy', ':id'))
                 ->setParameter('id', $this->currentUser->getId());
         }
+        elseif($this->currentUser){
+            $q->andWhere($q->expr()->eq('e.businessgroup', ':bid'))
+                ->setParameter('bid', $this->currentUser->getBusinessGroup()->getId());
+        }
 
         if ($topLevel) {
             if (true === $topLevel || $topLevel == 'variant') {
@@ -360,6 +364,33 @@ class EmailRepository extends CommonRepository
         }
 
         return $q->getQuery()->getArrayResult();
+    }
+
+    /**
+     * Returns a list of all emails for a specific businessgroup.
+     *
+     * @param null businessgroup
+     *
+     * @return array
+     */
+    public function getEmailsList($businessgroup = 0)
+    {
+        $q = $this->_em->getConnection()->createQueryBuilder();
+
+        $q->select('e.id')
+            ->from(MAUTIC_TABLE_PREFIX.'emails', 'e');
+
+        $q->where('e.businessgroup = :bid');
+        $q->setParameter('bid', $businessgroup);
+
+        $results = $q->execute()->fetchAll();
+
+        $return = [];
+        foreach ($results as $r) {
+            $return[] = $r['id'];
+        }
+
+        return $return;
     }
 
     /**

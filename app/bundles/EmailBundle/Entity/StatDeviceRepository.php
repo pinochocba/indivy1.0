@@ -26,6 +26,7 @@ class StatDeviceRepository extends CommonRepository
      */
     public function getDeviceStats($emailIds, \DateTime $fromDate = null, \DateTime $toDate = null)
     {
+
         $qb = $this->getEntityManager()->getConnection()->createQueryBuilder();
 
         $qb->select('count(es.id) as count, d.device as device, es.list_id')
@@ -57,6 +58,8 @@ class StatDeviceRepository extends CommonRepository
                 $qb->expr()->lte('es.date_read', $qb->expr()->literal($dt->toUtcString()))
             );
         }
+
+        //printf("%s\n", $qb->getSQL());
 
         return $qb->execute()->fetchAll();
     }

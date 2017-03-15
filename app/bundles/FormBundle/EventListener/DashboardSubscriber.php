@@ -85,6 +85,10 @@ class DashboardSubscriber extends MainDashboardSubscriber
             $widget = $event->getWidget();
             $params = $widget->getParams();
 
+            if(isset($params['form_id'])){
+                $params['filter']['form_id'] = $params['form_id'];
+            }
+
             if (!$event->isCached()) {
                 $event->setTemplateData([
                     'chartType'   => 'line',
@@ -94,6 +98,7 @@ class DashboardSubscriber extends MainDashboardSubscriber
                         $params['dateFrom'],
                         $params['dateTo'],
                         $params['dateFormat'],
+                        $params['filter'],
                         $canViewOthers
                     ),
                 ]);
@@ -114,7 +119,18 @@ class DashboardSubscriber extends MainDashboardSubscriber
                     $limit = $params['limit'];
                 }
 
-                $referrers = $this->formSubmissionModel->getTopSubmissionReferrers($limit, $params['dateFrom'], $params['dateTo'], $canViewOthers);
+                if(isset($params['form_id'])){
+                    $params['filter']['form_id'] = $params['form_id'];
+                }
+
+                $referrers = $this->formSubmissionModel->getTopSubmissionReferrers(
+                    $limit,
+                    $params['dateFrom'],
+                    $params['dateTo'],
+                    $params['filter'],
+                    $canViewOthers
+                );
+
                 $items     = [];
 
                 // Build table rows with links
@@ -160,7 +176,18 @@ class DashboardSubscriber extends MainDashboardSubscriber
                     $limit = $params['limit'];
                 }
 
-                $submitters = $this->formSubmissionModel->getTopSubmitters($limit, $params['dateFrom'], $params['dateTo'], $canViewOthers);
+                if(isset($params['form_id'])){
+                    $params['filter']['form_id'] = $params['form_id'];
+                }
+
+                $submitters = $this->formSubmissionModel->getTopSubmitters(
+                    $limit,
+                    $params['dateFrom'],
+                    $params['dateTo'],
+                    $params['filter'],
+                    $canViewOthers
+                );
+
                 $items      = [];
 
                 // Build table rows with links
@@ -206,6 +233,10 @@ class DashboardSubscriber extends MainDashboardSubscriber
             if (!$event->isCached()) {
                 $params = $event->getWidget()->getParams();
 
+                if(isset($params['form_id'])){
+                    $params['filter']['id'] = $params['form_id'];
+                }
+
                 if (empty($params['limit'])) {
                     // Count the forms limit from the widget height
                     $limit = round((($event->getWidget()->getHeight() - 80) / 35) - 1);
@@ -213,7 +244,14 @@ class DashboardSubscriber extends MainDashboardSubscriber
                     $limit = $params['limit'];
                 }
 
-                $forms = $this->formModel->getFormList($limit, $params['dateFrom'], $params['dateTo'], [], ['canViewOthers' => true]);
+                $forms = $this->formModel->getFormList(
+                    $limit,
+                    $params['dateFrom'],
+                    $params['dateTo'],
+                    $params['filter'],
+                    ['canViewOthers' => true]
+                );
+
                 $items = [];
 
                 // Build table rows with links

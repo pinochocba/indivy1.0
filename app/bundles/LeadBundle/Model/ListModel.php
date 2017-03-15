@@ -503,6 +503,25 @@ class ListModel extends FormModel
     }
 
     /**
+     * @param string $alias
+     *
+     * @return mixed
+     */
+    public function getUsersLists($alias = '')
+    {
+        if (!$this->security->isGranted('lead:lists:viewother')){
+            $user = $this->userHelper->getUser();
+            $lists = $this->em->getRepository('MauticLeadBundle:LeadList')->getLists($user, $alias);
+        }
+        else{
+            $user = $this->userHelper->getUser()->getBusinessGroup()->getId();
+            $lists = $this->em->getRepository('MauticLeadBundle:LeadList')->getLeadList($user);
+        }
+        
+        return $lists;
+    }
+
+    /**
      * Get a list of global lead lists.
      *
      * @return mixed

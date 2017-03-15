@@ -67,6 +67,8 @@ class CalendarSubscriber extends CommonSubscriber
                 $query->andWhere($query->expr()->gte($eventType['dateName'], ':now'))
                     ->setParameter('now', $now->toUtcString());
             }
+            $query->andWhere($query->expr()->eq('c.businessgroup', $dates['businessgroup']));
+
             $results = $query->execute()->fetchAll();
 
             // We need to convert the date to a ISO8601 compliant string

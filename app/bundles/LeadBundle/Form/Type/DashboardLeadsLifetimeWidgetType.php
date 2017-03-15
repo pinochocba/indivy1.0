@@ -36,8 +36,9 @@ class DashboardLeadsLifetimeWidgetType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $model = $this->factory->getModel('lead.list');
+        $businessgroup = $this->factory->getUser()->getBusinessGroup()->getId();
 
-        $lists       = $model->getUserLists();
+        $lists       = $model->getRepository()->getLeadList($businessgroup);
         $segments    = [];
         $segments[0] = $this->factory->getTranslator()->trans('mautic.lead.all.leads');
         foreach ($lists as $list) {

@@ -29,6 +29,7 @@ use Mautic\FormBundle\Exception\ValidationException;
 use Mautic\FormBundle\FormEvents;
 use Mautic\FormBundle\Helper\FormFieldHelper;
 use Mautic\LeadBundle\Entity\Lead;
+use Mautic\LeadBundle\Entity\WebPageLead;
 use Mautic\LeadBundle\Model\CompanyModel;
 use Mautic\LeadBundle\Model\FieldModel as LeadFieldModel;
 use Mautic\LeadBundle\Model\LeadModel;
@@ -345,6 +346,28 @@ class SubmissionModel extends CommonFormModel
         // Save the submission
         $this->saveEntity($submission);
 
+        //get domain name
+        $domain = parse_url($referer, PHP_URL_HOST);
+        $domain = str_replace("www.","",$domain); //remove www.//
+        $domain = str_replace("https://","",$domain); //remove https://
+        $domain = str_replace("http://","",$domain); //remove http://
+
+        //get webpageid
+        $webRepo = $this->em->getRepository('MauticLeadBundle:WebPage');
+        $webEntity = $webRepo->getEntityByUrl($domain);
+
+        //set webpage_leads
+        $webPageLead = new WebPageLead();
+        $webPageLead->setWebPage($webEntity);
+        $webPageLead->setLead($lead);
+        $webPageLead->setDateAdded(date('Y-m-d H:i:s'));
+
+        $webLeadRepo = $this->em->getRepository('MauticLeadBundle:WebPageLead');
+        $webResult = $webLeadRepo->getEntity($webEntity->getId(), $lead->getId());
+        if (!$webResult) {
+            $webLeadRepo->saveEntity($webPageLead);
+        }
+
         // Now handle post submission actions
         try {
             $this->executeFormActions($submissionEvent);
@@ -597,6 +620,8 @@ class SubmissionModel extends CommonFormModel
         $data = $query->loadAndBuildTimeData($q);
         $chart->setDataset($this->translator->trans('mautic.form.submission.count'), $data);
 
+        //printf("%s\n", $q->getSQL());
+
         return $chart->render();
     }
 
@@ -629,6 +654,8 @@ class SubmissionModel extends CommonFormModel
         $chartQuery = new ChartQuery($this->em->getConnection(), $dateFrom, $dateTo);
         $chartQuery->applyFilters($q, $filters);
         $chartQuery->applyDateFilters($q, 'date_submitted');
+
+        //printf("%s\n", $q->getSQL());
 
         $results = $q->execute()->fetchAll();
 

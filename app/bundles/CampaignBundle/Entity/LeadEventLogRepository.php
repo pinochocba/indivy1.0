@@ -176,6 +176,8 @@ class LeadEventLogRepository extends EntityRepository
         $query->andWhere($query->expr()->eq('c.businessgroup', ':businessgroup'))
             ->setParameter('businessgroup', $options['businessgroup']);
 
+        //printf("%d\n", $options['businessgroup']);
+
         return $query->execute()->fetchAll();
     }
 

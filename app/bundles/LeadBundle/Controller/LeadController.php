@@ -15,6 +15,7 @@ use Mautic\CoreBundle\Helper\BuilderTokenHelper;
 use Mautic\CoreBundle\Helper\EmojiHelper;
 use Mautic\LeadBundle\Entity\DoNotContact;
 use Mautic\LeadBundle\Entity\Lead;
+use Mautic\LeadBundle\Entity\WebPageLead;
 use Mautic\LeadBundle\Model\LeadModel;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
@@ -467,6 +468,23 @@ class LeadController extends FormController
 
                     //form is valid so process the data
                     $model->saveEntity($lead);
+
+                    // set webpages_leads
+                    $businessgroup = $this->user->getBusinessGroup()->getId();
+                    $webModel = $this->getModel('lead.webpage');
+                    $webRepo = $webModel->getRepository();
+                    $webEntity = $webRepo->getEntityByBusinessgroup($businessgroup);
+
+                    $webPageLead = new WebPageLead();
+                    $webPageLead->setWebPage($webEntity);
+                    $webPageLead->setLead($lead);
+                    $webPageLead->setDateAdded(date('Y-m-d H:i:s'));
+
+                    $webLeadRepo = $webModel->getWebPageLeadRepository();
+                    $webResult = $webLeadRepo->getEntity($webEntity->getId(), $lead->getId());
+                    if (!$webResult) {
+                        $webLeadRepo->saveEntity($webPageLead);
+                    }
 
                     if (!empty($companies)) {
                         $model->modifyCompanies($lead, $companies);

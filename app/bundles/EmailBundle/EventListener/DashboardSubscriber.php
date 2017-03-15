@@ -86,6 +86,9 @@ class DashboardSubscriber extends MainDashboardSubscriber
                 $params['filter']['flag'] = $params['flag'];
             }
 
+            if (isset($params['email_id']))
+                $params['filter']['email_id'] = $params['email_id'];
+
             if (!$event->isCached()) {
                 $event->setTemplateData([
                     'chartType'   => 'line',
@@ -109,11 +112,19 @@ class DashboardSubscriber extends MainDashboardSubscriber
             $widget = $event->getWidget();
             $params = $widget->getParams();
 
+            if (isset($params['email_id']))
+                $params['filter']['email_id'] = $params['email_id'];
+
             if (!$event->isCached()) {
                 $event->setTemplateData([
                     'chartType'   => 'pie',
                     'chartHeight' => $widget->getHeight() - 80,
-                    'chartData'   => $this->emailModel->getIgnoredVsReadPieChartData($params['dateFrom'], $params['dateTo'], [], $canViewOthers),
+                    'chartData'   => $this->emailModel->getIgnoredVsReadPieChartData(
+                        $params['dateFrom'],
+                        $params['dateTo'],
+                        $params['filter'],
+                        $canViewOthers
+                    ),
                 ]);
             }
 
@@ -145,11 +156,15 @@ class DashboardSubscriber extends MainDashboardSubscriber
                     $limit = $params['limit'];
                 }
 
+                if (isset($params['email_id'])){
+                    $params['filter']['email_id'] = $params['email_id'];
+                }
+
                 $emails = $this->emailModel->getEmailStatList(
                     $limit,
                     $params['dateFrom'],
                     $params['dateTo'],
-                    [],
+                    $params['filter'],
                     ['groupBy' => 'sends', 'canViewOthers' => $canViewOthers]
                 );
                 $items = [];
@@ -197,11 +212,15 @@ class DashboardSubscriber extends MainDashboardSubscriber
                     $limit = $params['limit'];
                 }
 
+                if (isset($params['email_id'])){
+                    $params['filter']['email_id'] = $params['email_id'];
+                }
+
                 $emails = $this->emailModel->getEmailStatList(
                     $limit,
                     $params['dateFrom'],
                     $params['dateTo'],
-                    [],
+                    $params['filter'],
                     ['groupBy' => 'reads', 'canViewOthers' => $canViewOthers]
                 );
                 $items = [];
@@ -249,11 +268,15 @@ class DashboardSubscriber extends MainDashboardSubscriber
                     $limit = $params['limit'];
                 }
 
+                if (isset($params['email_id'])){
+                    $params['filter']['id'] = $params['email_id'];
+                }
+
                 $emails = $this->emailModel->getEmailList(
                     $limit,
                     $params['dateFrom'],
                     $params['dateTo'],
-                    [],
+                    $params['filter'],
                     ['groupBy' => 'creations', 'canViewOthers' => $canViewOthers]
                 );
                 $items = [];
@@ -295,6 +318,10 @@ class DashboardSubscriber extends MainDashboardSubscriber
             $widget = $event->getWidget();
             $params = $widget->getParams();
 
+            if (isset($params['email_id'])){
+                $params['filter']['email_id'] = $params['email_id'];
+            }
+
             if (!$event->isCached()) {
                 $event->setTemplateData([
                     'chartType'   => 'pie',
@@ -302,6 +329,7 @@ class DashboardSubscriber extends MainDashboardSubscriber
                     'chartData'   => $this->emailModel->getDeviceGranularityPieChartData(
                         $params['dateFrom'],
                         $params['dateTo'],
+                        $params['filter'],
                         $canViewOthers
                     ),
                 ]);

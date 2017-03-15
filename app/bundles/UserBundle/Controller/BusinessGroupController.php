@@ -183,25 +183,21 @@ class BusinessGroupController extends FormController
                     'contentTemplate' => 'MauticUserBundle:BusinessGroup:index',
                     'passthroughVars' => [
                         'activeLink'    => '#mautic_businessgroup_index',
-                        'mauticContent' => 'BusinessGroup',
+                        'mauticContent' => 'businessgroup',
                     ],
                 ]);
-            } else {
+            } elseif ($valid && !$cancelled) {
                 return $this->editAction($entity->getId(), true);
             }
         }
 
         return $this->delegateView([
-            'viewParameters' => [
-                'form'              => $this->setFormTheme($form, 'MauticUserBundle:BusinessGroup:form.html.php', 'MauticUserBundle:FormTheme\BusinessGroup'),
-                'permissionsConfig' => $permissionsConfig,
-            ],
+            'viewParameters'  => ['form' => $form->createView()],
             'contentTemplate' => 'MauticUserBundle:BusinessGroup:form.html.php',
             'passthroughVars' => [
                 'activeLink'     => '#mautic_businessgroup_new',
-                'route'          => $this->generateUrl('mautic_businessgroup_action', ['objectAction' => 'new']),
-                'mauticContent'  => 'BusinessGroup',
-                'permissionList' => $permissionsConfig['list'],
+                'route'          => $action,
+                'mauticContent'  => 'businessgroup',
             ],
         ]);
     }
